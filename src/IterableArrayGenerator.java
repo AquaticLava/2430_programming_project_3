@@ -2,43 +2,41 @@ import java.util.Arrays;
 import java.util.Iterator;
 
 /**
- * //todo, adapt to shuttle problem.
+ * //todo, change documentation to match new functionality.
+ * //todo figure out how to do in 2^n iterations?
  * Generates all possible variations of a specified length integer array.
  * Lexicographic algorithm is from:
  * https://www.geeksforgeeks.org/lexicographic-permutations-of-string/
  */
-public record IterableArrayGenerator(int generatorLength) implements Iterable<Integer[]> {
-
+public class IterableArrayGenerator implements Iterable<Experiment[]> {
+    Experiment[] experiments;
     /**
      * Instantiates a new Iterable array generator.
      *
-     * @param generatorLength the length of the arrays to generate
+     * @param experiments the length of the arrays to generate
      */
-    public IterableArrayGenerator {
+    public IterableArrayGenerator(Experiment[] experiments) {
+        this.experiments = experiments;
     }
 
     @Override
-    public Iterator<Integer[]> iterator() {
-        return new GeneratorIterator(generatorLength);
+    public Iterator<Experiment[]> iterator() {
+        return new GeneratorIterator(experiments);
     }
 
-    private static class GeneratorIterator implements Iterator<Integer[]> {
+    private static class GeneratorIterator implements Iterator<Experiment[]> {
 
         private int size;
         private int i = 0;
         private boolean firstIteration = true;
-        private Integer[] currentIteration;
+        private Experiment[] currentIteration;
 
-        private GeneratorIterator(int length) {
-            this.size = length;
-            Integer[] ints = new Integer[size];
-            for (int j = 0; j < ints.length; j++) {
-                ints[j] = j + 1;
-            }
-            currentIteration = ints;
+        private GeneratorIterator(Experiment[] experiments) {
+            currentIteration = experiments;
+            size = currentIteration.length;
         }
 
-        private static int findCeil(Integer[] ints, int first, int l,
+        private static int findCeil(Experiment[] experiments, int first, int l,
                                     int h) {
             // initialize index of ceiling element
             int ceilIndex = l;
@@ -46,7 +44,7 @@ public record IterableArrayGenerator(int generatorLength) implements Iterable<In
             // Now iterate through rest of the elements and find
             // the smallest character greater than 'first'
             for (int i = l + 1; i <= h; i++)
-                if (ints[i] > first && ints[i] < ints[ceilIndex])
+                if (experiments[i].getId() > first && experiments[i].getId() < experiments[ceilIndex].getId())
                     ceilIndex = i;
 
             return ceilIndex;
@@ -55,23 +53,23 @@ public record IterableArrayGenerator(int generatorLength) implements Iterable<In
         @Override
         public boolean hasNext() {
             for (i = size - 2; i >= 0; --i) {
-                if (currentIteration[i] < currentIteration[i + 1])
+                if (currentIteration[i].getId() < currentIteration[i + 1].getId())
                     break;
             }
             return i != -1;
         }
 
         @Override
-        public Integer[] next() {
+        public Experiment[] next() {
             if (firstIteration) {
                 firstIteration = false;
                 return Arrays.copyOf(currentIteration, currentIteration.length);
             }
-            int ceilIndex = findCeil(currentIteration, currentIteration[i], i + 1,
+            int ceilIndex = findCeil(currentIteration, currentIteration[i].getId(), i + 1,
                     size - 1);
 
             // Swap first and second characters
-            Integer temp = currentIteration[i];
+            Experiment temp = currentIteration[i];
             currentIteration[i] = currentIteration[ceilIndex];
             currentIteration[ceilIndex] = temp;
 
