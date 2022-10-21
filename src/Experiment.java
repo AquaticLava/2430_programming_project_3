@@ -1,7 +1,7 @@
 /**
  * Represents a load for a space shuttle
  */
-public class Experiment {
+public class Experiment implements Comparable<Experiment>{
     private int id;
     private String experimentName;
     private int weight;
@@ -29,5 +29,17 @@ public class Experiment {
 
     public int getRating() {
         return rating;
+    }
+
+    @Override
+    public String toString() {
+        return  experimentName + "(" + id + ") " +
+                "rating:" + rating + " " +
+                weight + "kg";
+    }
+
+    @Override
+    public int compareTo(Experiment other) {
+        return Integer.compare(this.id, other.id);
     }
 }
