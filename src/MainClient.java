@@ -18,14 +18,8 @@ public class MainClient {
                 new Experiment(11,"Cosmic Rays",80,7),
                 new Experiment(12,"Yeast Fermentation",27,4),
         };
-        //Currently, the generator creates 12! permutations.
-        //Use at your own risk.
-        //(optimal score is 53)
-        //TODO simplify this mess.
-        int MAX_WEIGHT = 700;
-        //This is here to make it easy to disable generation.
-        List<Experiment> bestCombo = new LinkedList<>();
-        bestCombo = findBest(experiments, MAX_WEIGHT);
+
+        List<Experiment> bestCombo = findBest(experiments, 700);
 
         System.out.println(getRating(bestCombo) + " " + bestCombo);
     }
@@ -41,25 +35,31 @@ public class MainClient {
     }
 
     private static List<Experiment> findBest(Experiment[] experiments, int MAX_WEIGHT) {
-        int bestComboRating = 0;
         List<Experiment> bestCombo = new LinkedList<>();
+        int bestComboRating = 0;
+
         for (Experiment[] e : new IterableArrayGenerator(experiments)) {
+            List<Experiment> current = new LinkedList<>();
             int totalRating = 0;
             int totalWeight = 0;
-            List<Experiment> current = new LinkedList<>();
+
             for (Experiment experiment : e) {
                 totalWeight += experiment.getWeight();
+
                 if (totalWeight > MAX_WEIGHT){
                     break;
                 }
-                current.add(experiment);
+
                 totalRating += experiment.getRating();
+                current.add(experiment);
             }
+
             if (totalRating > bestComboRating){
                 bestCombo = current;
                 bestComboRating = totalRating;
             }
         }
+
         return bestCombo;
     }
 }
