@@ -19,9 +19,13 @@ public class MainClient {
                 new Experiment(12,"Yeast Fermentation",27,4),
         };
 
-        List<Experiment> bestCombo = findBest(experiments, 700);
+        int maxWeight = 700;
+        List<Experiment> bestCombo = findBest(experiments, maxWeight);
 
         System.out.println(getRating(bestCombo) + " " + bestCombo);
+
+        OptimalPayload optimalPayload = new OptimalPayload(experiments);
+        optimalPayload.displayOptimal(maxWeight);
     }
 
     private static int getRating(List<Experiment> bestCombo) {
@@ -34,7 +38,7 @@ public class MainClient {
         return rating;
     }
 
-    private static List<Experiment> findBest(Experiment[] experiments, int MAX_WEIGHT) {
+    private static List<Experiment> findBest(Experiment[] experiments, int maxWeight) {
         List<Experiment> bestCombo = new LinkedList<>();
         int bestComboRating = 0;
 
@@ -46,7 +50,7 @@ public class MainClient {
             for (Experiment experiment : e) {
                 totalWeight += experiment.getWeight();
 
-                if (totalWeight > MAX_WEIGHT){
+                if (totalWeight > maxWeight){
                     break;
                 }
 
